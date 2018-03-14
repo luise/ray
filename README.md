@@ -46,12 +46,6 @@ and call the `rayCluster.setImage(<image>)` function in `rayExample.js` to use
 this image in your cluster.
 
 ## Notes
-* Kubernetes currently doesn't support setting the shared memory size,
-which Ray needs (see [issue](https://github.com/ray-project/ray/issues/1315)). There is
-potentially [a workaround](https://docs.openshift.org/latest/dev_guide/shared_memory.html)
-using volumes. Ray requires a large amount of shared memory because each object store
-keeps all of its objects in shared memory, so the amount of shared memory
-will limit the size of the object store.
 * The head node runs an extra Redis shard on a random port. Right now it
 isn't possible to configure the random ports, and they don't fall within a certain
 range, so we need to allow traffic on all possible ports.

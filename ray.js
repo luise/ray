@@ -1,13 +1,11 @@
 const kelda = require('kelda');
 const fs = require('fs');
 
-// XXX: Kubernetes currently doesn't support setting the shared memory size,
-// which Ray needs: https://github.com/ray-project/ray/issues/1315. There is
-// potentially a workaround using volumes, when we get to support those:
-// https://docs.openshift.org/latest/dev_guide/shared_memory.html
-// ** Ray requires a large amount of shared memory because each object store
+// Ray requires a large amount of shared memory because each object store
 // keeps all of its objects in shared memory, so the amount of shared memory
-// will limit the size of the object store
+// will limit the size of the object store. The shared memory size is the same
+// as that of the host machine, so to increase the amount of shared memory,
+// increase the size of the worker machines.
 
 let image = 'luise/ray-deploy'; // luise/ray-examples contains the Ray examples.
 
@@ -27,10 +25,22 @@ function setImage(newImage) {
 
 class Ray {
   constructor(numberOfWorkers) {
+    const shmVolume = new kelda.Volume({
+      name: 'shm',
+      type: 'hostPath',
+      path: '/dev/shm',
+    });
+
     this.head = new kelda.Container({
       name: 'head',
       image,
       command: ['/bin/bash', '-c', `ray start --head --object-manager-port=${objManagerPort} --redis-port=${redisPort} --num-workers=${numberOfWorkers} && while true; do sleep 30; done;`],
+      volumeMounts: [
+        new kelda.VolumeMount({
+          volume: shmVolume,
+          mountPath: shmVolume.path,
+        }),
+      ],
     });
 
     this.workers = [];
@@ -39,6 +49,12 @@ class Ray {
         name: 'worker',
         image,
         command: ['/bin/bash', '-c', `ray start --object-manager-port=${objManagerPort} --redis-address=${this.head.getHostname()}:${redisPort} --num-workers=${numberOfWorkers} && while true; do sleep 30; done;`],
+        volumeMounts: [
+          new kelda.VolumeMount({
+            volume: shmVolume,
+            mountPath: shmVolume.path,
+          }),
+        ],
       }));
     }
 
@@ -66,7 +82,6 @@ class Ray {
 
     // The examples contained in the `luise/ray-examples` image, need access to
     // the public internet to download the sample data.
-    // XXX: Right now, there is not enough room in plasma to run the examples.
     // kelda.allowTraffic(this.head, kelda.publicInternet, 443);
     // kelda.allowTraffic(this.workers, kelda.publicInternet, 443);
   }
