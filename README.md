@@ -34,23 +34,23 @@ Ray container in the cluster.
 ### Running Examples
 A version of the [Ray examples image](https://ray.readthedocs.io/en/latest/install-on-docker.html#build-docker-images)
 is pushed as `luise/ray-examples`. To deploy the example image:
-1. Call `rayCluster.setImage('luise/ray-examples')` in the `rayExample.js` blueprint.
+1. Call `ray.setImage('luise/ray-examples')` in the `rayExample.js` blueprint.
+This line must be added before the call to `new ray.Ray`.
 2. Make sure the Ray cluster (both head and workers) can talk to the public
 internet on port 443. This is necessary to download the sample data for the examples.
 3. SSH into a container with `kelda ssh worker` for instance, and run one of the [examples](https://ray.readthedocs.io/en/latest/install-on-docker.html#hyperparameter-optimization)
 listed in the Ray docs (but skip the first part about booting the container).
+
+    Make sure to run the job on the entire cluster by adding the
+  `--redis-address=head:63` flag (e.g. `python /ray/examples/rl_pong/driver.py
+  --redis-address=head:63`). If this flag isn't supplied, the job will just run
+  on `localhost` and not take advantage of the other nodes in the cluster.
 
 2. To run your own workload, create [a customized Dockerfile](http://ray.readthedocs.io/en/master/using-ray-and-docker-on-a-cluster.html#creating-a-customized-dockerfile)
 and call the `rayCluster.setImage(<image>)` function in `rayExample.js` to use
 this image in your cluster.
 
 ## Notes
-* Kubernetes currently doesn't support setting the shared memory size,
-which Ray needs (see [issue](https://github.com/ray-project/ray/issues/1315)). There is
-potentially [a workaround](https://docs.openshift.org/latest/dev_guide/shared_memory.html)
-using volumes. Ray requires a large amount of shared memory because each object store
-keeps all of its objects in shared memory, so the amount of shared memory
-will limit the size of the object store.
 * The head node runs an extra Redis shard on a random port. Right now it
 isn't possible to configure the random ports, and they don't fall within a certain
 range, so we need to allow traffic on all possible ports.
