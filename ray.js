@@ -63,14 +63,9 @@ class Ray {
     kelda.allowTraffic(this.workers, this.head, objManagerPort);
     kelda.allowTraffic(this.workers, this.workers, objManagerPort);
     kelda.allowTraffic(this.head, this.workers, objManagerPort);
-    // XXX: The Head sends traffic FROM objManagerPort to a random port on the workers.
 
     // The head node runs the Redis store, which functions as Ray's centralized
     // control plane.
-    // XXX: Ray uses Redis's publish/subscribe functionality. When publishing,
-    // the head sends notes to the workers and itself FROM the redisPort. Do
-    // we need to do anything to allow this traffic? Do we need to open all ports?
-    // This is also relevant for the extra Redis shard running on random ports.
     kelda.allowTraffic(this.workers, this.head, redisPort);
     kelda.allowTraffic(this.head, this.head, redisPort);
 
