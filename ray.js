@@ -61,16 +61,21 @@ class Ray {
     // on all possible ports.
     kelda.allowTraffic(this.workers, this.head, new kelda.PortRange(0, 65535));
     kelda.allowTraffic(this.head, this.head, new kelda.PortRange(0, 65535));
-
-    // The examples contained in the `luise/ray-examples` image, need access to
-    // the public internet to download the sample data.
-    // kelda.allowTraffic(this.head, kelda.publicInternet, 443);
-    // kelda.allowTraffic(this.workers, kelda.publicInternet, 443);
   }
 
   deploy(infrastructure) {
     this.head.deploy(infrastructure);
     this.workers.forEach(worker => worker.deploy(infrastructure));
+  }
+
+  /**
+   * Allow all Ray nodes to talk to the public internet on port 443.
+   * This is needed for downloading the sample data for the examples contained
+   * in the `luise/ray-examples` image.
+   */
+  allowExampleDownloads() {
+    kelda.allowTraffic(this.head, kelda.publicInternet, 443);
+    kelda.allowTraffic(this.workers, kelda.publicInternet, 443);
   }
 
   /**
