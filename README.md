@@ -34,8 +34,7 @@ Ray container in the cluster.
 ### Running Examples
 A version of the [Ray examples image](https://ray.readthedocs.io/en/latest/install-on-docker.html#build-docker-images)
 is pushed as `luise/ray-examples`. To deploy the example image:
-1. Call `ray.setImage('luise/ray-examples')` in the `rayExample.js` blueprint.
-This line must be added before the call to `new ray.Ray`.
+1. Call `rayCluster.setImage('luise/ray-examples')` in the `rayExample.js` blueprint.
 2. Make sure the Ray cluster (both head and workers) can talk to the public
 internet on port 443. This is necessary to download the sample data for the examples.
 3. SSH into a container with `kelda ssh worker` for instance, and run one of the [examples](https://ray.readthedocs.io/en/latest/install-on-docker.html#hyperparameter-optimization)
@@ -47,7 +46,7 @@ listed in the Ray docs (but skip the first part about booting the container).
   on `localhost` and not take advantage of the other nodes in the cluster.
 
 2. To run your own workload, create [a customized Dockerfile](http://ray.readthedocs.io/en/master/using-ray-and-docker-on-a-cluster.html#creating-a-customized-dockerfile)
-and call the `ray.setImage(<image>)` function in `rayExample.js` to use
+and call the `rayCluster.setImage(<image>)` function in `rayExample.js` to use
 this image in your cluster.
 
 ## Notes

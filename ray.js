@@ -6,21 +6,9 @@ const kelda = require('kelda');
 // as that of the host machine, so to increase the amount of shared memory,
 // increase the size of the worker machines.
 
-let image = 'luise/ray-deploy'; // luise/ray-examples contains the Ray examples.
-
+const image = 'luise/ray-deploy';
 const objManagerPort = 8076;
 const redisPort = 6379;
-
-/**
- * Change the Ray Docker image used to run the cluster. This is meant for users
- * who want to for instance clone a project repository, add extra dependencies,
- * and add a custom run script.
- *
- * @param {string} newImage The Docker image used to run the cluster.
- */
-function setImage(newImage) {
-  image = newImage;
-}
 
 class Ray {
   constructor(numberOfWorkers) {
@@ -84,7 +72,21 @@ class Ray {
     this.head.deploy(infrastructure);
     this.workers.forEach(worker => worker.deploy(infrastructure));
   }
+
+  /**
+   * Change the Ray Docker image used to run the cluster. This is meant for users
+   * who want to for instance clone a project repository, add extra dependencies,
+   * and add a custom run script.
+   *
+   * @param {string} newImage The Docker image used to run the cluster.
+   */
+  setImage(newImage) {
+    const newKeldaImage = new kelda.Image({ name: newImage });
+    this.head.image = newKeldaImage;
+    this.workers.forEach((worker) => {
+      worker.image = newKeldaImage; // eslint-disable-line no-param-reassign
+    });
+  }
 }
 
 exports.Ray = Ray;
-exports.setImage = setImage;
