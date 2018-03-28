@@ -42,12 +42,12 @@ internet on port 443. This is necessary to download the sample data for the exam
 listed in the Ray docs (but skip the first part about booting the container).
 
     Make sure to run the job on the entire cluster by adding the
-  `--redis-address=head:63` flag (e.g. `python /ray/examples/rl_pong/driver.py
-  --redis-address=head:63`). If this flag isn't supplied, the job will just run
+  `--redis-address=head:6379` flag (e.g. `python /ray/examples/rl_pong/driver.py
+  --redis-address=head:6379`). If this flag isn't supplied, the job will just run
   on `localhost` and not take advantage of the other nodes in the cluster.
 
 2. To run your own workload, create [a customized Dockerfile](http://ray.readthedocs.io/en/master/using-ray-and-docker-on-a-cluster.html#creating-a-customized-dockerfile)
-and call the `rayCluster.setImage(<image>)` function in `rayExample.js` to use
+and call the `ray.setImage(<image>)` function in `rayExample.js` to use
 this image in your cluster.
 
 ## Notes

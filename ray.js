@@ -1,5 +1,4 @@
 const kelda = require('kelda');
-const fs = require('fs');
 
 // Ray requires a large amount of shared memory because each object store
 // keeps all of its objects in shared memory, so the amount of shared memory
