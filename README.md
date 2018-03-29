@@ -49,6 +49,15 @@ listed in the Ray docs (but skip the first part about booting the container).
 and call the `rayCluster.setImage(<image>)` function in `rayExample.js` to use
 this image in your cluster.
 
+## Images
+Since Ray doesn't publish Docker images, the images used in this blueprint are
+just built from the Ray source (as described [here](https://ray.readthedocs.io/en/latest/install-on-docker.html#build-docker-images))
+and pushed to Luise's public DockerHub registry.
+There is no guarantee that the images will have the latest version of Ray (in fact,
+they most likely won't), but you can always [build your own image](https://ray.readthedocs.io/en/latest/install-on-docker.html#build-docker-images)
+from the Ray source, push it your public Docker image registry, and change the
+image used in `rayExample.js` using the `setImage` method.
+
 ## Notes
 * The head node runs an extra Redis shard on a random port. Right now it
 isn't possible to configure the random ports, and they don't fall within a certain
